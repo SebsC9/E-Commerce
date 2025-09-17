@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <title>E-Commerce Seb</title>
+</head>
+<body>
+    <header>
+        <h1 class="titulo">E-Commerce Seb</h1>
+        <nav class="navegacion">
+            <a href="#Carrito">Carrito</a>
+            <a href="#Productos">Productos</a>
+        </nav>
+    </header>
+    <main class="contenedor">
+        <section id="Productos" class="productos">
+            <h2 class="productos-titulo">Productos</h2>
+            <div id="productos-container" class="productos-container">
+            </div>
+        </section>
+        <aside id="Carrito" class="carrito">
+            <h2 class="carrito-titulo">Carrito</h2>
+            <div id="carrito-container" class="carrito-container">
+            </div>
+            <div class="carrito-total">
+                <h3>Total: $ <span id="precio-total">0.00</span></h3>
+                <button class="boton" id="vaciar-carrito">Vaciar Carrito</button>
+                <button class="boton" id="finalizar-compra">Finalizar Compra</button>
+            </div>
+        </aside>
+    </main>
+    <footer>
+        <p>&copy; 2024 E-Commerce Seb. Todos los derechos reservados.</p>
+    </footer>
+    <script src="app.js"></script>
+</body>
+</html>
