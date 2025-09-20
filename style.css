@@ -87,6 +87,13 @@ header {
     margin: 5px 0;
 }
 
+.opciones {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    margin-top: 10px;
+}
+
 
 /* Estilos del carrito de compras */
 .carrito {
@@ -141,6 +148,18 @@ header {
     background-color: #66111a;
 }
 
+.carrito-btn{
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    padding: 5px 15px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+.carrito-btn:hover {
+    background-color: #218838;
+}
+
 .agregar-carrito-btn, .ver-detalles-btn {
     background-color: #007bff;
     color: #fff;
@@ -151,6 +170,12 @@ header {
 }
 .agregar-carrito-btn:hover, .ver-detalles-btn:hover {
     background-color: #0056b3;
+}
+
+.ver-detalles-btn {
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
 }
 
 
@@ -179,4 +204,17 @@ footer {
         min-width: 300px;
         display: block;
     }
+}
+
+/* Pagina de detalles */
+.detalles-container {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border-radius: 5px;
 }

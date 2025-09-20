@@ -22,8 +22,10 @@ fetch(API_URL)
                     <h3>${product.title}</h3>
                     <img src="${product.thumbnail}" alt="${product.title}">
                     <p>Precio: $${product.price}</p>
+                    <div class="opciones">
                     <button class="agregar-carrito-btn"  data-id="${product.id}">Agregar al carrito</button>
-                    <button class="ver-detalles-btn" data-id="${product.id}">Ver detalles</button>
+                    <a href="detalles.html?id=${product.id}" class="ver-detalles-btn">Ver detalles</a>
+                    </div>
                 `;
                 productosContainer.appendChild(div);
             });
@@ -113,3 +115,47 @@ finalizarCompraBtn.addEventListener('click', () => {
     mostrarCarrito();
     finalizarCompraBtn.disabled = true;
 });
+
+// Pagina de detalles
+const detallesContainer = document.getElementById('detalles-container');
+
+async function cargarDetallesProducto() {
+  if (!detallesContainer) return;
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const id = urlParams.get('id');
+  console.log('cargarDetallesProducto() invoked — id=', id);
+
+  if (!id) {
+    detallesContainer.innerHTML = '<p>ID de producto no proporcionado. <a href="index.html">Volver</a></p>';
+    return;
+  }
+  detallesContainer.innerHTML = '<p>Cargando producto...</p>';
+  try {
+    const base = typeof API_URL !== 'undefined' ? API_URL : 'https://dummyjson.com/products';
+    const response = await fetch(`${base}/${encodeURIComponent(id)}`);
+    console.log('fetch URL:', `${base}/${id}`, 'status', response.status);
+    if (!response.ok) {
+      detallesContainer.innerHTML = `<p>Error ${response.status} al cargar el producto.</p>`;
+      return;
+    }
+    const product = await response.json();
+    detallesContainer.innerHTML = `
+      <div class="detalle-card">
+        <img src="${product.images?.[0] ?? product.thumbnail ?? ''}" alt="${product.title}" class="detalle-img">
+        <div class="detalle-body">
+          <h2>${product.title}</h2>
+          <p class="detalle-cat">Categoría: ${product.category ?? ''}</p>
+          <p class="detalle-price">Precio: $${Number(product.price).toFixed(2)}</p>
+          <p class="detalle-desc">${product.description ?? ''}</p>
+        </div>
+      </div>
+    `;
+  } catch (error) {
+    console.error('Error al cargar detalles:', error);
+    detallesContainer.innerHTML = '<p>Error al cargar los detalles del producto. <button id="reintentar">Reintentar</button></p>';
+    document.getElementById('reintentar')?.addEventListener('click', cargarDetallesProducto);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', cargarDetallesProducto);
