@@ -72,7 +72,7 @@ function mostrarCarrito() {
                 <p>Cantidad: ${item.cantidad}</p>
                 <button class="eliminar-item-btn" data-id="${product.id}">Eliminar</button>
             `;
-            totalPrecio += product.price * item.cantidad;
+            totalPrecio += Number(product.price) * Number(item.cantidad);
         } else {
             div.innerHTML = `
                 <h4>Producto (id: ${item.id})</h4>
@@ -116,46 +116,47 @@ finalizarCompraBtn.addEventListener('click', () => {
     finalizarCompraBtn.disabled = true;
 });
 
-// Pagina de detalles
-const detallesContainer = document.getElementById('detalles-container');
+//Toggle carrito en móvil
+(function controlCarrito(){
+  const aside = document.getElementById('Carrito');
+  const abrirBtn = document.getElementById('carrito-btn') || document.getElementById('carrito-btn-toggle');
+  const cerrarBtn = document.getElementById('cerrar-carrito');
 
-async function cargarDetallesProducto() {
-  if (!detallesContainer) return;
+  if (!aside || !abrirBtn) return;
 
-  const urlParams = new URLSearchParams(window.location.search);
-  const id = urlParams.get('id');
-  console.log('cargarDetallesProducto() invoked — id=', id);
-
-  if (!id) {
-    detallesContainer.innerHTML = '<p>ID de producto no proporcionado. <a href="index.html">Volver</a></p>';
-    return;
+  // función que abre el carrito
+  function abrirCarrito() {
+    aside.classList.add('abierto');
+    document.body.classList.add('carrito-abierto');
+    aside.setAttribute('aria-hidden','false');
+    abrirBtn.setAttribute('aria-expanded','true');
+    
+    if (typeof mostrarCarrito === 'function') mostrarCarrito();
+    setTimeout(() => {
+      const primero = aside.querySelector('button, input, a');
+      if (primero) primero.focus();
+    }, 120);
   }
-  detallesContainer.innerHTML = '<p>Cargando producto...</p>';
-  try {
-    const base = typeof API_URL !== 'undefined' ? API_URL : 'https://dummyjson.com/products';
-    const response = await fetch(`${base}/${encodeURIComponent(id)}`);
-    console.log('fetch URL:', `${base}/${id}`, 'status', response.status);
-    if (!response.ok) {
-      detallesContainer.innerHTML = `<p>Error ${response.status} al cargar el producto.</p>`;
-      return;
-    }
-    const product = await response.json();
-    detallesContainer.innerHTML = `
-      <div class="detalle-card">
-        <img src="${product.images?.[0] ?? product.thumbnail ?? ''}" alt="${product.title}" class="detalle-img">
-        <div class="detalle-body">
-          <h2>${product.title}</h2>
-          <p class="detalle-cat">Categoría: ${product.category ?? ''}</p>
-          <p class="detalle-price">Precio: $${Number(product.price).toFixed(2)}</p>
-          <p class="detalle-desc">${product.description ?? ''}</p>
-        </div>
-      </div>
-    `;
-  } catch (error) {
-    console.error('Error al cargar detalles:', error);
-    detallesContainer.innerHTML = '<p>Error al cargar los detalles del producto. <button id="reintentar">Reintentar</button></p>';
-    document.getElementById('reintentar')?.addEventListener('click', cargarDetallesProducto);
-  }
-}
 
-document.addEventListener('DOMContentLoaded', cargarDetallesProducto);
+  function cerrarCarrito() {
+    aside.classList.remove('abierto');
+    document.body.classList.remove('carrito-abierto');
+    aside.setAttribute('aria-hidden','true');
+    abrirBtn.setAttribute('aria-expanded','false');
+    // devolver foco al botón que abrió
+    setTimeout(() => abrirBtn.focus(), 0);
+  }
+
+  abrirBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    aside.classList.contains('abierto') ? cerrarCarrito() : abrirCarrito();
+  });
+
+  if (cerrarBtn) cerrarBtn.addEventListener('click', cerrarCarrito);
+
+  document.addEventListener('click', (e) => {
+    if (!aside.classList.contains('abierto')) return;
+    if (aside.contains(e.target) || abrirBtn.contains(e.target)) return;
+    cerrarCarrito();
+  });
+})();
