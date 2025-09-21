@@ -73,6 +73,7 @@ function mostrarCarrito() {
                 <button class="eliminar-item-btn" data-id="${product.id}">Eliminar</button>
             `;
             totalPrecio += Number(product.price) * Number(item.cantidad);
+            finalizarCompraBtn.disabled = false;
         } else {
             div.innerHTML = `
                 <h4>Producto (id: ${item.id})</h4>
