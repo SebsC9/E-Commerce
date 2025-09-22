@@ -105,16 +105,46 @@ vaciarCarritoBtn.addEventListener('click', () => {
 });
 
 //Finalizar compra
-finalizarCompraBtn.addEventListener('click', () => {
+finalizarCompraBtn.addEventListener('click', async () => {
+    // Si el carrito está vacío, no dejamos continuar
     if (carrito.length === 0) {
         alert('El carrito está vacío');
         return;
     }
-    alert('Compra finalizada. Gracias por su compra.');
-    carrito = [];
-    localStorage.removeItem('carrito');
-    mostrarCarrito();
-    finalizarCompraBtn.disabled = true;
+
+    // Armamos el objeto con los datos que pide la API
+    const payload = {
+        userId: 1, // lo dejamos fijo, simula que el usuario logueado tiene id = 1
+        products: carrito.map(item => ({
+            id: item.id,          // id del producto
+            quantity: item.cantidad // cantidad que eligió el usuario
+        }))
+    };
+
+    try {
+        // Hacemos la petición POST a la API
+        const respuesta = await fetch('https://dummyjson.com/carts/add', {
+            method: 'POST', // tipo de operación
+            headers: { 'Content-Type': 'application/json' }, // le decimos que enviamos JSON
+            body: JSON.stringify(payload) // convertimos el objeto JS a JSON
+        });
+
+        // Parseamos la respuesta de la API
+        const data = await respuesta.json();
+        console.log('Respuesta del servidor:', data);
+
+        // Mostramos un mensaje al usuario con el ID de la orden
+        alert(`Compra realizada con éxito. ID de la orden: ${data.id}`);
+
+        // Vaciamos el carrito local porque ya se "procesó"
+        carrito = [];
+        localStorage.removeItem('carrito');
+        mostrarCarrito();
+    } catch (error) {
+        // Si algo sale mal, lo mostramos en consola y alertamos al usuario
+        console.error('Error al enviar la orden:', error);
+        alert('Hubo un problema al procesar la compra. Intenta de nuevo.');
+    }
 });
 
 //Toggle carrito en móvil
